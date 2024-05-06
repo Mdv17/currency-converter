@@ -17,6 +17,19 @@ for (let i = 0; i < dropList.length; i++) {
         // Inserting option tag inside select 
         dropList[i].insertAdjacentHTML("beforeend", optionTag);
     }
+    dropList[i].addEventListener("change", e => {
+        loadFlag(e.target); // Calling loadFlag with passing target element as an argument
+    });
+}
+
+function loadFlag(element){
+    for(code in country_code){
+        if(code == element.value){ // If currency code of country list is equal to option value
+            let imgTag = element.parentElement.querySelector("img"); // Selecting img tag of particular drop list
+            // Passing country code of a selected currency code in a img url
+            imgTag.src = `https://flagsapi.com/${country_code[code]}/flat/64.png`
+        }
+    }
 }
 
 window.addEventListener("load", () => {
@@ -28,13 +41,23 @@ getButton.addEventListener("click", e => {
     getExchangeRate();
 });
 
+const exchangeIcon = document.querySelector(".drop-list .icon");
+exchangeIcon.addEventListener("click", () => {
+    let tempCode = fromCurrency.value; // Temporary currency code of FROM drop list
+    fromCurrency.value = toCurrency.value; // Passing TO currency code to FROM currency code
+    toCurrency.value = tempCode; // Passing temporary currency code TO currency code
+    loadFlag(fromCurrency); // Calling loadFlag with passing select element (fromCurrency) of FROM
+    loadFlag(toCurrency); //Calling loadFlag with passing select element (TOCurrency) of TO
+    getExchangeRate();
+})
+
 function getExchangeRate(){
     const amount = document.querySelector(".amount input"),
     exchangeRateTxt = document.querySelector(".exchange-rate");
     let amountVal = amount.value;
     // If user doesnt enter any value or enter 0 then we will put 1 by default in the input field
     if(amountVal == "" || amountVal == "0"){
-        amount.value ="1";
+        amount.value = "1";
         amountVal = 1;
     }
 
