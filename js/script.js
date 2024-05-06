@@ -19,13 +19,18 @@ for (let i = 0; i < dropList.length; i++) {
     }
 }
 
+window.addEventListener("load", () => {
+    getExchangeRate();
+});
+
 getButton.addEventListener("click", e => {
     e.preventDefault(); //preventing form from submitting
     getExchangeRate();
 });
 
 function getExchangeRate(){
-    const amount = document.querySelector(".amount input");
+    const amount = document.querySelector(".amount input"),
+    exchangeRateTxt = document.querySelector(".exchange-rate");
     let amountVal = amount.value;
     // If user doesnt enter any value or enter 0 then we will put 1 by default in the input field
     if(amountVal == "" || amountVal == "0"){
@@ -33,11 +38,14 @@ function getExchangeRate(){
         amountVal = 1;
     }
 
-    let url = `https://v6.exchangerate-api.com/v6/MY-API-KEY/latest/${fromCurrency.value}`;
+    exchangeRateTxt.innerText = "Getting exchange rate...";
+
+    let url = `https://v6.exchangerate-api.com/v6/84e6d5bb46bcbbdb3ac109c8/latest/${fromCurrency.value}`;
     // fetching api response and returning it with parsing into js object and then method receiving that object
     fetch(url).then(response => response.json()).then(result => {
+        console.log(result);
         let exchangeRate = result.conversion_rates[toCurrency.value];
         let totalExchangeRate = (amountVal * exchangeRate).toFixed(2);
-        const exchangeRateTxt = document.querySelector(".exchange-rate")
+        exchangeRateTxt.innerText = `${amountVal} ${fromCurrency.value} = ${totalExchangeRate} ${toCurrency.value}`;
     });
 }
